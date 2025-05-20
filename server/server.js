@@ -1,0 +1,17 @@
+const express = require("express")
+const app = express()
+const dotenv = require("dotenv")
+const addUser = require("./api/addUser/addUser")
+const addPosts = require("./api/addPosts/addPosts")
+const userPosts = require("./api/userPosts/userPosts")
+const removeUserPosts = require("./api/deleteUserPosts/removeUserPosts")
+dotenv.config()
+const port = process.env.PORT
+app.listen(port, () => {
+ console.log(`Server is running on port ${port}`)
+})
+app.use(express.json())
+app.post("/user/add", addUser)
+app.post("/post/add", addPosts)
+app.get("/user/posts", userPosts)
+app.delete("/user/posts/:userId", removeUserPosts)
