@@ -5,6 +5,7 @@ const addUser = require("./api/addUser/addUser")
 const addPosts = require("./api/addPosts/addPosts")
 const userPosts = require("./api/userPosts/userPosts")
 const removeUserPosts = require("./api/deleteUserPosts/removeUserPosts")
+const userList = require("./api/userLists/users")
 dotenv.config()
 const port = process.env.PORT
 app.listen(port, () => {
@@ -12,6 +13,7 @@ app.listen(port, () => {
 })
 app.use(express.json())
 app.post("/user/add", addUser)
+app.get("/user/lists", userList)
 app.post("/post/add", addPosts)
 app.get("/user/posts", userPosts)
 app.delete("/user/posts/:userId", removeUserPosts)
