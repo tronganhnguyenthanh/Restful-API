@@ -1,0 +1,21 @@
+.form-custom-control:focus{
+  box-shadow:none !important;
+}
+
+.user-form-wrapper{
+  width:55%;
+  height:auto;
+  margin:auto;
+  padding:10px;
+  margin-top:250px;
+  animation:2s changeShape ease-in-out infinite;
+  background-color:darksalmon;
+  color:#fff;
+}
+
+@keyframes changeShape{
+  100%{
+   border-radius:20px;
+   background-color:burlywood;
+  } 
+}
