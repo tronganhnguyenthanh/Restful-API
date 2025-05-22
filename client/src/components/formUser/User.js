@@ -2,6 +2,7 @@ import {useState} from "react"
 import {Button, Col, Container, Form, Row} from "react-bootstrap"
 import axios from "axios"
 import {ToastContainer, toast} from "react-toastify"
+import {useNavigate} from "react-router-dom"
 const User = () => {
  const init_data = {
   firstName:"",
@@ -9,6 +10,7 @@ const User = () => {
   email:""
  }
  const [data, setData] = useState(init_data)
+ const navigate = useNavigate()
  const handleOnChange = (e) => {
   let newData = {...data}
   newData[e.target.name] = e.target.value
@@ -29,6 +31,9 @@ const User = () => {
   }else{
     let res = await axios.post("http://localhost:8080/user/add", {firstName:data.firstName, lastName:data.lastName,email:data.email})
     toast.success(res.data.message, {position:"top-center"})
+    setTimeout(function(){
+     navigate("/user/posts/add")
+    },1000)
   }
  }
  return (
