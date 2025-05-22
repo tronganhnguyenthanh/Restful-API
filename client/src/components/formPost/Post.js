@@ -2,12 +2,14 @@ import axios from "axios"
 import {useEffect} from "react"
 import {useState} from "react"
 import {Container, Row, Col, Form, Button} from "react-bootstrap"
+import {useNavigate} from "react-router-dom"
 import {toast, ToastContainer} from "react-toastify"
 const UserPost = () => {
   const [authors, setAuthors] = useState([])
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [selected, setSelected] = useState("")
+  const navigate = useNavigate()
   useEffect(() => {
    getAuthors()
   },[])
@@ -30,6 +32,7 @@ const UserPost = () => {
     }else{
       let userPosts = await axios.post("http://localhost:8080/post/add", {postList:[{title:title, content:content,authorId:Number(selected)}]})
       toast.success(userPosts.data.message, {position:"top-center"})
+      navigate(`/user/post/detail/${selected}`)
     }
   }
   return (

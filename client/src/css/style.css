@@ -28,6 +28,10 @@ html{
   color:#fff;
 }
 
+.btn-delete{
+  width:20%;
+}
+
 @keyframes changeShape{
   100%{
    border-radius:20px;
