@@ -2,6 +2,12 @@ html{
  overflow-x:hidden;
 }
 
+body{
+ font-family:"IBM Plex Mono", monospace;
+ font-weight:400;
+ font-style:normal;
+}
+
 .form-custom-control:focus{
   box-shadow:none !important;
 }
