@@ -11,7 +11,11 @@ body{
 .form-custom-control:focus{
   box-shadow:none !important;
 }
-
+.bi.bi-arrow-left{
+  cursor:pointer;
+  color:dodgerblue;
+  margin:9px;
+}
 .user-form-wrapper{
   width:55%;
   height:auto;
