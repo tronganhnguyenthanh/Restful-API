@@ -11,11 +11,19 @@ body{
 .form-custom-control:focus{
   box-shadow:none !important;
 }
+
 .bi.bi-arrow-left{
   cursor:pointer;
   color:dodgerblue;
   margin:9px;
 }
+
+.bi.bi-arrow-right{
+  cursor:pointer;
+  color:dodgerblue;
+  margin:9px;
+}
+
 .user-form-wrapper{
   width:55%;
   height:auto;
@@ -40,6 +48,24 @@ body{
 
 .btn-delete{
   width:20%;
+}
+
+.icon-inside-input{
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.search-bar{
+  width:85%;
+}
+
+.form-control{
+  border-radius:20px;
+}
+
+.form-control:focus{
+  box-shadow:none !important;
 }
 
 @keyframes changeShape{

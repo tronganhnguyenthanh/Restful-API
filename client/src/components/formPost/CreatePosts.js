@@ -2,7 +2,7 @@ import axios from "axios"
 import {useEffect} from "react"
 import {useState} from "react"
 import {Container, Row, Col, Form, Button} from "react-bootstrap"
-import {useNavigate} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import {toast, ToastContainer} from "react-toastify"
 const UserPost = () => {
   const [authors, setAuthors] = useState([])
@@ -27,17 +27,22 @@ const UserPost = () => {
      return
     }
     if(selected === ""){
-     toast.error("Please choose your user's post", {position:"top-center"})
+     toast.error("Please choose your author id", {position:"top-center"})
      return
     }else{
       let userPosts = await axios.post("http://localhost:8080/post/add", {postList:[{title:title, content:content,authorId:Number(selected)}]})
       toast.success(userPosts.data.message, {position:"top-center"})
-      navigate(`/user/post/detail/${selected}`)
+      navigate("/post/lists")
     }
   }
   return (
    <Container>
      <ToastContainer/>
+      <Link to="/">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
+          <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+        </svg>
+      </Link>
      <div className="post-form-wrapper">
       <Form>
         <Row>
