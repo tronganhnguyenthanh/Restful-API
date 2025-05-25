@@ -26,9 +26,13 @@ const PostList = () => {
     navigate(`/user/post/detail/${authorId}`)
   }
   const deletePost = async (postId) => {
-    console.log("postId", postId)
+    let isConfirmed = window.confirm("Are you sure to delete this post?")
+    if(isConfirmed === true){
+     let res = await axios.delete(`http://localhost:8080/post/${postId}`)
+     toast.success(res.data.message, {position:"top-center"})
+     window.location.reload(false)
+    }
   }
-
   const handleFilter = (e) => {
     if(e.target.value === ""){
      getPostLists()
@@ -90,5 +94,4 @@ const PostList = () => {
     </div>
   )
 }
-
 export default PostList

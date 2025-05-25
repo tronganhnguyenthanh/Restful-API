@@ -8,13 +8,13 @@ const PostDetail = () => {
   const [userPostsDetail, setUserPostsDetail] = useState({})
   const [userPosts, setUserPosts] = useState([])
   useEffect(() => {
-    getUserPostsDetail(userId)
-  }, [userId])
+   getUserPostsDetail(userId)
+  },[userId])
   const getUserPostsDetail = async (userId) => {
-    let res = await axios.get(`http://localhost:8080/user/post/detail/${userId}`)
-    let posts = await res.data.posts
-    setUserPosts(posts.post)
-    setUserPostsDetail(posts)
+   let res = await axios.get(`http://localhost:8080/user/post/detail/${userId}`)
+   let posts = await res.data.posts
+   setUserPosts(posts.post)
+   setUserPostsDetail(posts)
   }
   return (
     <Container className="p-2">
