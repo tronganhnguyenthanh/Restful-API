@@ -30,7 +30,9 @@ const UserPost = () => {
      toast.error("Please choose your author id", {position:"top-center"})
      return
     }else{
-      let userPosts = await axios.post("http://localhost:8080/post/add", {postList:[{title:title, content:content,authorId:Number(selected)}]})
+      let userPosts = await axios.post("http://localhost:8080/post/add", {
+       postList:[{title:title, content:content,authorId:selected}]
+      })
       toast.success(userPosts.data.message, {position:"top-center"})
       navigate("/post/lists")
     }

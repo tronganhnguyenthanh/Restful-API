@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model user{
- userId Int @id @default(autoincrement())
+ userId String @id @default(auto()) @map("_id") @db.ObjectId
  firstName String
  lastName String
  email String @unique
@@ -19,9 +19,9 @@ model user{
 }
 
 model posts{
- postId Int @id @default(autoincrement())
+ postId String @id @default(auto()) @map("_id") @db.ObjectId
  title String
  content String
- author user @relation(fields:[authorId], references:[userId])
- authorId Int
+ author user @relation(fields:[authorId], references:[userId])  
+ authorId String @db.ObjectId
 }

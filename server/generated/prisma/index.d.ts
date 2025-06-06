@@ -81,53 +81,6 @@ export class PrismaClient<
   $use(cb: Prisma.Middleware): void
 
 /**
-   * Executes a prepared raw query and returns the number of affected rows.
-   * @example
-   * ```
-   * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
-
-  /**
-   * Executes a raw query and returns the number of affected rows.
-   * Susceptible to SQL injections, see documentation.
-   * @example
-   * ```
-   * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
-
-  /**
-   * Performs a prepared raw query and returns the `SELECT` data.
-   * @example
-   * ```
-   * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
-
-  /**
-   * Performs a raw query and returns the `SELECT` data.
-   * Susceptible to SQL injections, see documentation.
-   * @example
-   * ```
-   * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
-
-
-  /**
    * Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
    * @example
    * ```
@@ -140,10 +93,24 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P]): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
-  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
+  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number }): $Utils.JsPromise<R>
 
+  /**
+   * Executes a raw MongoDB command and returns the result of it.
+   * @example
+   * ```
+   * const user = await prisma.$runCommandRaw({
+   *   aggregate: 'User',
+   *   pipeline: [{ $match: { name: 'Bob' } }, { $project: { email: true, _id: false } }],
+   *   explain: false,
+   * })
+   * ```
+   * 
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $runCommandRaw(command: Prisma.InputJsonObject): Prisma.PrismaPromise<Prisma.JsonObject>
 
   $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<ClientOptions>, ExtArgs, $Utils.Call<Prisma.TypeMapCb<ClientOptions>, {
     extArgs: ExtArgs
@@ -629,7 +596,7 @@ export namespace Prisma {
     }
     meta: {
       modelProps: "user" | "posts"
-      txIsolationLevel: Prisma.TransactionIsolationLevel
+      txIsolationLevel: never
     }
     model: {
       user: {
@@ -664,10 +631,6 @@ export namespace Prisma {
             args: Prisma.userCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          createManyAndReturn: {
-            args: Prisma.userCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$userPayload>[]
-          }
           delete: {
             args: Prisma.userDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$userPayload>
@@ -684,10 +647,6 @@ export namespace Prisma {
             args: Prisma.userUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          updateManyAndReturn: {
-            args: Prisma.userUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$userPayload>[]
-          }
           upsert: {
             args: Prisma.userUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$userPayload>
@@ -699,6 +658,14 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.userGroupByArgs<ExtArgs>
             result: $Utils.Optional<UserGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.userFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.userAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
             args: Prisma.userCountArgs<ExtArgs>
@@ -738,10 +705,6 @@ export namespace Prisma {
             args: Prisma.postsCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          createManyAndReturn: {
-            args: Prisma.postsCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$postsPayload>[]
-          }
           delete: {
             args: Prisma.postsDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$postsPayload>
@@ -758,10 +721,6 @@ export namespace Prisma {
             args: Prisma.postsUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          updateManyAndReturn: {
-            args: Prisma.postsUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$postsPayload>[]
-          }
           upsert: {
             args: Prisma.postsUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$postsPayload>
@@ -774,6 +733,14 @@ export namespace Prisma {
             args: Prisma.postsGroupByArgs<ExtArgs>
             result: $Utils.Optional<PostsGroupByOutputType>[]
           }
+          findRaw: {
+            args: Prisma.postsFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.postsAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
           count: {
             args: Prisma.postsCountArgs<ExtArgs>
             result: $Utils.Optional<PostsCountAggregateOutputType> | number
@@ -785,21 +752,9 @@ export namespace Prisma {
     other: {
       payload: any
       operations: {
-        $executeRaw: {
-          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
-          result: any
-        }
-        $executeRawUnsafe: {
-          args: [query: string, ...values: any[]],
-          result: any
-        }
-        $queryRaw: {
-          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
-          result: any
-        }
-        $queryRawUnsafe: {
-          args: [query: string, ...values: any[]],
-          result: any
+        $runCommandRaw: {
+          args: Prisma.InputJsonObject,
+          result: Prisma.JsonObject
         }
       }
     }
@@ -845,7 +800,6 @@ export namespace Prisma {
     transactionOptions?: {
       maxWait?: number
       timeout?: number
-      isolationLevel?: Prisma.TransactionIsolationLevel
     }
     /**
      * Global configuration for omitting model fields by default.
@@ -996,29 +950,19 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
 
-  export type UserAvgAggregateOutputType = {
-    userId: number | null
-  }
-
-  export type UserSumAggregateOutputType = {
-    userId: number | null
-  }
-
   export type UserMinAggregateOutputType = {
-    userId: number | null
+    userId: string | null
     firstName: string | null
     lastName: string | null
     email: string | null
   }
 
   export type UserMaxAggregateOutputType = {
-    userId: number | null
+    userId: string | null
     firstName: string | null
     lastName: string | null
     email: string | null
@@ -1032,14 +976,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type UserAvgAggregateInputType = {
-    userId?: true
-  }
-
-  export type UserSumAggregateInputType = {
-    userId?: true
-  }
 
   export type UserMinAggregateInputType = {
     userId?: true
@@ -1101,18 +1037,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: UserAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: UserSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1143,20 +1067,16 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
-    _avg?: UserAvgAggregateInputType
-    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
 
   export type UserGroupByOutputType = {
-    userId: number
+    userId: string
     firstName: string
     lastName: string
     email: string
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1184,19 +1104,7 @@ export namespace Prisma {
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
-  export type userSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    userId?: boolean
-    firstName?: boolean
-    lastName?: boolean
-    email?: boolean
-  }, ExtArgs["result"]["user"]>
 
-  export type userSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    userId?: boolean
-    firstName?: boolean
-    lastName?: boolean
-    email?: boolean
-  }, ExtArgs["result"]["user"]>
 
   export type userSelectScalar = {
     userId?: boolean
@@ -1210,8 +1118,6 @@ export namespace Prisma {
     post?: boolean | user$postArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type userIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type userIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "user"
@@ -1219,7 +1125,7 @@ export namespace Prisma {
       post: Prisma.$postsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      userId: number
+      userId: string
       firstName: string
       lastName: string
       email: string
@@ -1341,30 +1247,6 @@ export namespace Prisma {
     createMany<T extends userCreateManyArgs>(args?: SelectSubset<T, userCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Users and returns the data saved in the database.
-     * @param {userCreateManyAndReturnArgs} args - Arguments to create many Users.
-     * @example
-     * // Create many Users
-     * const user = await prisma.user.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Users and only return the `userId`
-     * const userWithUserIdOnly = await prisma.user.createManyAndReturn({
-     *   select: { userId: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends userCreateManyAndReturnArgs>(args?: SelectSubset<T, userCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Delete a User.
      * @param {userDeleteArgs} args - Arguments to delete one User.
      * @example
@@ -1429,36 +1311,6 @@ export namespace Prisma {
     updateMany<T extends userUpdateManyArgs>(args: SelectSubset<T, userUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Users and returns the data updated in the database.
-     * @param {userUpdateManyAndReturnArgs} args - Arguments to update many Users.
-     * @example
-     * // Update many Users
-     * const user = await prisma.user.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Users and only return the `userId`
-     * const userWithUserIdOnly = await prisma.user.updateManyAndReturn({
-     *   select: { userId: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends userUpdateManyAndReturnArgs>(args: SelectSubset<T, userUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Create or update one User.
      * @param {userUpsertArgs} args - Arguments to update or create a User.
      * @example
@@ -1476,6 +1328,29 @@ export namespace Prisma {
      * })
      */
     upsert<T extends userUpsertArgs>(args: SelectSubset<T, userUpsertArgs<ExtArgs>>): Prisma__userClient<$Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Users that matches the filter.
+     * @param {userFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const user = await prisma.user.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: userFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a User.
+     * @param {userAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const user = await prisma.user.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: userAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -1647,7 +1522,7 @@ export namespace Prisma {
    * Fields of the user model
    */
   interface userFieldRefs {
-    readonly userId: FieldRef<"user", 'Int'>
+    readonly userId: FieldRef<"user", 'String'>
     readonly firstName: FieldRef<"user", 'String'>
     readonly lastName: FieldRef<"user", 'String'>
     readonly email: FieldRef<"user", 'String'>
@@ -1883,24 +1758,6 @@ export namespace Prisma {
   }
 
   /**
-   * user createManyAndReturn
-   */
-  export type userCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the user
-     */
-    select?: userSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the user
-     */
-    omit?: userOmit<ExtArgs> | null
-    /**
-     * The data used to create many users.
-     */
-    data: userCreateManyInput | userCreateManyInput[]
-  }
-
-  /**
    * user update
    */
   export type userUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1930,32 +1787,6 @@ export namespace Prisma {
    * user updateMany
    */
   export type userUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update users.
-     */
-    data: XOR<userUpdateManyMutationInput, userUncheckedUpdateManyInput>
-    /**
-     * Filter which users to update
-     */
-    where?: userWhereInput
-    /**
-     * Limit how many users to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * user updateManyAndReturn
-   */
-  export type userUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the user
-     */
-    select?: userSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the user
-     */
-    omit?: userOmit<ExtArgs> | null
     /**
      * The data used to update users.
      */
@@ -2037,6 +1868,34 @@ export namespace Prisma {
   }
 
   /**
+   * user findRaw
+   */
+  export type userFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * user aggregateRaw
+   */
+  export type userAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
    * user.post
    */
   export type user$postArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2085,34 +1944,22 @@ export namespace Prisma {
 
   export type AggregatePosts = {
     _count: PostsCountAggregateOutputType | null
-    _avg: PostsAvgAggregateOutputType | null
-    _sum: PostsSumAggregateOutputType | null
     _min: PostsMinAggregateOutputType | null
     _max: PostsMaxAggregateOutputType | null
   }
 
-  export type PostsAvgAggregateOutputType = {
-    postId: number | null
-    authorId: number | null
-  }
-
-  export type PostsSumAggregateOutputType = {
-    postId: number | null
-    authorId: number | null
-  }
-
   export type PostsMinAggregateOutputType = {
-    postId: number | null
+    postId: string | null
     title: string | null
     content: string | null
-    authorId: number | null
+    authorId: string | null
   }
 
   export type PostsMaxAggregateOutputType = {
-    postId: number | null
+    postId: string | null
     title: string | null
     content: string | null
-    authorId: number | null
+    authorId: string | null
   }
 
   export type PostsCountAggregateOutputType = {
@@ -2123,16 +1970,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type PostsAvgAggregateInputType = {
-    postId?: true
-    authorId?: true
-  }
-
-  export type PostsSumAggregateInputType = {
-    postId?: true
-    authorId?: true
-  }
 
   export type PostsMinAggregateInputType = {
     postId?: true
@@ -2194,18 +2031,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: PostsAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PostsSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: PostsMinAggregateInputType
@@ -2236,20 +2061,16 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: PostsCountAggregateInputType | true
-    _avg?: PostsAvgAggregateInputType
-    _sum?: PostsSumAggregateInputType
     _min?: PostsMinAggregateInputType
     _max?: PostsMaxAggregateInputType
   }
 
   export type PostsGroupByOutputType = {
-    postId: number
+    postId: string
     title: string
     content: string
-    authorId: number
+    authorId: string
     _count: PostsCountAggregateOutputType | null
-    _avg: PostsAvgAggregateOutputType | null
-    _sum: PostsSumAggregateOutputType | null
     _min: PostsMinAggregateOutputType | null
     _max: PostsMaxAggregateOutputType | null
   }
@@ -2276,21 +2097,7 @@ export namespace Prisma {
     author?: boolean | userDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["posts"]>
 
-  export type postsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    postId?: boolean
-    title?: boolean
-    content?: boolean
-    authorId?: boolean
-    author?: boolean | userDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["posts"]>
 
-  export type postsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    postId?: boolean
-    title?: boolean
-    content?: boolean
-    authorId?: boolean
-    author?: boolean | userDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["posts"]>
 
   export type postsSelectScalar = {
     postId?: boolean
@@ -2303,12 +2110,6 @@ export namespace Prisma {
   export type postsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | userDefaultArgs<ExtArgs>
   }
-  export type postsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | userDefaultArgs<ExtArgs>
-  }
-  export type postsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | userDefaultArgs<ExtArgs>
-  }
 
   export type $postsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "posts"
@@ -2316,10 +2117,10 @@ export namespace Prisma {
       author: Prisma.$userPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      postId: number
+      postId: string
       title: string
       content: string
-      authorId: number
+      authorId: string
     }, ExtArgs["result"]["posts"]>
     composites: {}
   }
@@ -2438,30 +2239,6 @@ export namespace Prisma {
     createMany<T extends postsCreateManyArgs>(args?: SelectSubset<T, postsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Posts and returns the data saved in the database.
-     * @param {postsCreateManyAndReturnArgs} args - Arguments to create many Posts.
-     * @example
-     * // Create many Posts
-     * const posts = await prisma.posts.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Posts and only return the `postId`
-     * const postsWithPostIdOnly = await prisma.posts.createManyAndReturn({
-     *   select: { postId: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends postsCreateManyAndReturnArgs>(args?: SelectSubset<T, postsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$postsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Delete a Posts.
      * @param {postsDeleteArgs} args - Arguments to delete one Posts.
      * @example
@@ -2526,36 +2303,6 @@ export namespace Prisma {
     updateMany<T extends postsUpdateManyArgs>(args: SelectSubset<T, postsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Posts and returns the data updated in the database.
-     * @param {postsUpdateManyAndReturnArgs} args - Arguments to update many Posts.
-     * @example
-     * // Update many Posts
-     * const posts = await prisma.posts.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Posts and only return the `postId`
-     * const postsWithPostIdOnly = await prisma.posts.updateManyAndReturn({
-     *   select: { postId: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends postsUpdateManyAndReturnArgs>(args: SelectSubset<T, postsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$postsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Create or update one Posts.
      * @param {postsUpsertArgs} args - Arguments to update or create a Posts.
      * @example
@@ -2573,6 +2320,29 @@ export namespace Prisma {
      * })
      */
     upsert<T extends postsUpsertArgs>(args: SelectSubset<T, postsUpsertArgs<ExtArgs>>): Prisma__postsClient<$Result.GetResult<Prisma.$postsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Posts that matches the filter.
+     * @param {postsFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const posts = await prisma.posts.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: postsFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Posts.
+     * @param {postsAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const posts = await prisma.posts.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: postsAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -2744,10 +2514,10 @@ export namespace Prisma {
    * Fields of the posts model
    */
   interface postsFieldRefs {
-    readonly postId: FieldRef<"posts", 'Int'>
+    readonly postId: FieldRef<"posts", 'String'>
     readonly title: FieldRef<"posts", 'String'>
     readonly content: FieldRef<"posts", 'String'>
-    readonly authorId: FieldRef<"posts", 'Int'>
+    readonly authorId: FieldRef<"posts", 'String'>
   }
     
 
@@ -2980,28 +2750,6 @@ export namespace Prisma {
   }
 
   /**
-   * posts createManyAndReturn
-   */
-  export type postsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the posts
-     */
-    select?: postsSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the posts
-     */
-    omit?: postsOmit<ExtArgs> | null
-    /**
-     * The data used to create many posts.
-     */
-    data: postsCreateManyInput | postsCreateManyInput[]
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: postsIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
    * posts update
    */
   export type postsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3043,36 +2791,6 @@ export namespace Prisma {
      * Limit how many posts to update.
      */
     limit?: number
-  }
-
-  /**
-   * posts updateManyAndReturn
-   */
-  export type postsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the posts
-     */
-    select?: postsSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the posts
-     */
-    omit?: postsOmit<ExtArgs> | null
-    /**
-     * The data used to update posts.
-     */
-    data: XOR<postsUpdateManyMutationInput, postsUncheckedUpdateManyInput>
-    /**
-     * Filter which posts to update
-     */
-    where?: postsWhereInput
-    /**
-     * Limit how many posts to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: postsIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3142,6 +2860,34 @@ export namespace Prisma {
   }
 
   /**
+   * posts findRaw
+   */
+  export type postsFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * posts aggregateRaw
+   */
+  export type postsAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
    * posts without action
    */
   export type postsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3163,13 +2909,6 @@ export namespace Prisma {
   /**
    * Enums
    */
-
-  export const TransactionIsolationLevel: {
-    Serializable: 'Serializable'
-  };
-
-  export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
 
   export const UserScalarFieldEnum: {
     userId: 'userId',
@@ -3199,16 +2938,17 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
   /**
    * Field references
    */
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
 
 
   /**
@@ -3219,9 +2959,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
+   * Reference to a field of type 'String[]'
    */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
   /**
    * Deep Input Types
@@ -3232,7 +2986,7 @@ export namespace Prisma {
     AND?: userWhereInput | userWhereInput[]
     OR?: userWhereInput[]
     NOT?: userWhereInput | userWhereInput[]
-    userId?: IntFilter<"user"> | number
+    userId?: StringFilter<"user"> | string
     firstName?: StringFilter<"user"> | string
     lastName?: StringFilter<"user"> | string
     email?: StringFilter<"user"> | string
@@ -3248,7 +3002,7 @@ export namespace Prisma {
   }
 
   export type userWhereUniqueInput = Prisma.AtLeast<{
-    userId?: number
+    userId?: string
     email?: string
     AND?: userWhereInput | userWhereInput[]
     OR?: userWhereInput[]
@@ -3264,17 +3018,15 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     _count?: userCountOrderByAggregateInput
-    _avg?: userAvgOrderByAggregateInput
     _max?: userMaxOrderByAggregateInput
     _min?: userMinOrderByAggregateInput
-    _sum?: userSumOrderByAggregateInput
   }
 
   export type userScalarWhereWithAggregatesInput = {
     AND?: userScalarWhereWithAggregatesInput | userScalarWhereWithAggregatesInput[]
     OR?: userScalarWhereWithAggregatesInput[]
     NOT?: userScalarWhereWithAggregatesInput | userScalarWhereWithAggregatesInput[]
-    userId?: IntWithAggregatesFilter<"user"> | number
+    userId?: StringWithAggregatesFilter<"user"> | string
     firstName?: StringWithAggregatesFilter<"user"> | string
     lastName?: StringWithAggregatesFilter<"user"> | string
     email?: StringWithAggregatesFilter<"user"> | string
@@ -3284,10 +3036,10 @@ export namespace Prisma {
     AND?: postsWhereInput | postsWhereInput[]
     OR?: postsWhereInput[]
     NOT?: postsWhereInput | postsWhereInput[]
-    postId?: IntFilter<"posts"> | number
+    postId?: StringFilter<"posts"> | string
     title?: StringFilter<"posts"> | string
     content?: StringFilter<"posts"> | string
-    authorId?: IntFilter<"posts"> | number
+    authorId?: StringFilter<"posts"> | string
     author?: XOR<UserScalarRelationFilter, userWhereInput>
   }
 
@@ -3300,13 +3052,13 @@ export namespace Prisma {
   }
 
   export type postsWhereUniqueInput = Prisma.AtLeast<{
-    postId?: number
+    postId?: string
     AND?: postsWhereInput | postsWhereInput[]
     OR?: postsWhereInput[]
     NOT?: postsWhereInput | postsWhereInput[]
     title?: StringFilter<"posts"> | string
     content?: StringFilter<"posts"> | string
-    authorId?: IntFilter<"posts"> | number
+    authorId?: StringFilter<"posts"> | string
     author?: XOR<UserScalarRelationFilter, userWhereInput>
   }, "postId">
 
@@ -3316,23 +3068,22 @@ export namespace Prisma {
     content?: SortOrder
     authorId?: SortOrder
     _count?: postsCountOrderByAggregateInput
-    _avg?: postsAvgOrderByAggregateInput
     _max?: postsMaxOrderByAggregateInput
     _min?: postsMinOrderByAggregateInput
-    _sum?: postsSumOrderByAggregateInput
   }
 
   export type postsScalarWhereWithAggregatesInput = {
     AND?: postsScalarWhereWithAggregatesInput | postsScalarWhereWithAggregatesInput[]
     OR?: postsScalarWhereWithAggregatesInput[]
     NOT?: postsScalarWhereWithAggregatesInput | postsScalarWhereWithAggregatesInput[]
-    postId?: IntWithAggregatesFilter<"posts"> | number
+    postId?: StringWithAggregatesFilter<"posts"> | string
     title?: StringWithAggregatesFilter<"posts"> | string
     content?: StringWithAggregatesFilter<"posts"> | string
-    authorId?: IntWithAggregatesFilter<"posts"> | number
+    authorId?: StringWithAggregatesFilter<"posts"> | string
   }
 
   export type userCreateInput = {
+    userId?: string
     firstName: string
     lastName: string
     email: string
@@ -3340,7 +3091,7 @@ export namespace Prisma {
   }
 
   export type userUncheckedCreateInput = {
-    userId?: number
+    userId?: string
     firstName: string
     lastName: string
     email: string
@@ -3355,7 +3106,6 @@ export namespace Prisma {
   }
 
   export type userUncheckedUpdateInput = {
-    userId?: IntFieldUpdateOperationsInput | number
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -3363,7 +3113,7 @@ export namespace Prisma {
   }
 
   export type userCreateManyInput = {
-    userId?: number
+    userId?: string
     firstName: string
     lastName: string
     email: string
@@ -3376,23 +3126,23 @@ export namespace Prisma {
   }
 
   export type userUncheckedUpdateManyInput = {
-    userId?: IntFieldUpdateOperationsInput | number
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
   }
 
   export type postsCreateInput = {
+    postId?: string
     title: string
     content: string
     author: userCreateNestedOneWithoutPostInput
   }
 
   export type postsUncheckedCreateInput = {
-    postId?: number
+    postId?: string
     title: string
     content: string
-    authorId: number
+    authorId: string
   }
 
   export type postsUpdateInput = {
@@ -3402,17 +3152,16 @@ export namespace Prisma {
   }
 
   export type postsUncheckedUpdateInput = {
-    postId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
-    authorId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type postsCreateManyInput = {
-    postId?: number
+    postId?: string
     title: string
     content: string
-    authorId: number
+    authorId: string
   }
 
   export type postsUpdateManyMutationInput = {
@@ -3421,27 +3170,15 @@ export namespace Prisma {
   }
 
   export type postsUncheckedUpdateManyInput = {
-    postId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
-    authorId?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    authorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -3449,6 +3186,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
@@ -3469,10 +3207,6 @@ export namespace Prisma {
     email?: SortOrder
   }
 
-  export type userAvgOrderByAggregateInput = {
-    userId?: SortOrder
-  }
-
   export type userMaxOrderByAggregateInput = {
     userId?: SortOrder
     firstName?: SortOrder
@@ -3487,30 +3221,10 @@ export namespace Prisma {
     email?: SortOrder
   }
 
-  export type userSumOrderByAggregateInput = {
-    userId?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -3518,6 +3232,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -3536,11 +3251,6 @@ export namespace Prisma {
     authorId?: SortOrder
   }
 
-  export type postsAvgOrderByAggregateInput = {
-    postId?: SortOrder
-    authorId?: SortOrder
-  }
-
   export type postsMaxOrderByAggregateInput = {
     postId?: SortOrder
     title?: SortOrder
@@ -3552,11 +3262,6 @@ export namespace Prisma {
     postId?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    authorId?: SortOrder
-  }
-
-  export type postsSumOrderByAggregateInput = {
-    postId?: SortOrder
     authorId?: SortOrder
   }
 
@@ -3592,14 +3297,6 @@ export namespace Prisma {
     deleteMany?: postsScalarWhereInput | postsScalarWhereInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type postsUncheckedUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<postsCreateWithoutAuthorInput, postsUncheckedCreateWithoutAuthorInput> | postsCreateWithoutAuthorInput[] | postsUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: postsCreateOrConnectWithoutAuthorInput | postsCreateOrConnectWithoutAuthorInput[]
@@ -3628,21 +3325,10 @@ export namespace Prisma {
     update?: XOR<XOR<userUpdateToOneWithWhereWithoutPostInput, userUpdateWithoutPostInput>, userUncheckedUpdateWithoutPostInput>
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -3653,37 +3339,10 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -3697,13 +3356,25 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type postsCreateWithoutAuthorInput = {
+    postId?: string
     title: string
     content: string
   }
 
   export type postsUncheckedCreateWithoutAuthorInput = {
-    postId?: number
+    postId?: string
     title: string
     content: string
   }
@@ -3737,20 +3408,21 @@ export namespace Prisma {
     AND?: postsScalarWhereInput | postsScalarWhereInput[]
     OR?: postsScalarWhereInput[]
     NOT?: postsScalarWhereInput | postsScalarWhereInput[]
-    postId?: IntFilter<"posts"> | number
+    postId?: StringFilter<"posts"> | string
     title?: StringFilter<"posts"> | string
     content?: StringFilter<"posts"> | string
-    authorId?: IntFilter<"posts"> | number
+    authorId?: StringFilter<"posts"> | string
   }
 
   export type userCreateWithoutPostInput = {
+    userId?: string
     firstName: string
     lastName: string
     email: string
   }
 
   export type userUncheckedCreateWithoutPostInput = {
-    userId?: number
+    userId?: string
     firstName: string
     lastName: string
     email: string
@@ -3779,14 +3451,13 @@ export namespace Prisma {
   }
 
   export type userUncheckedUpdateWithoutPostInput = {
-    userId?: IntFieldUpdateOperationsInput | number
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
   }
 
   export type postsCreateManyAuthorInput = {
-    postId?: number
+    postId?: string
     title: string
     content: string
   }
@@ -3797,13 +3468,11 @@ export namespace Prisma {
   }
 
   export type postsUncheckedUpdateWithoutAuthorInput = {
-    postId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
   }
 
   export type postsUncheckedUpdateManyWithoutAuthorInput = {
-    postId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
   }
