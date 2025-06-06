@@ -14,7 +14,7 @@ const UserPost = () => {
    getAuthors()
   },[])
   const getAuthors = async () => {
-   let res = await axios.get("http://localhost:8080/user/lists")
+   let res = await axios.get("https://rest-api-server-1-iwtx.onrender.com/user/lists")
    setAuthors(res.data.users)
   }
   const handleAddPost = async () => {
@@ -30,7 +30,7 @@ const UserPost = () => {
      toast.error("Please choose your author id", {position:"top-center"})
      return
     }else{
-      let userPosts = await axios.post("http://localhost:8080/post/add", {
+      let userPosts = await axios.post("https://rest-api-server-1-iwtx.onrender.com/post/add", {
        postList:[{title:title, content:content,authorId:selected}]
       })
       toast.success(userPosts.data.message, {position:"top-center"})

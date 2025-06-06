@@ -11,7 +11,7 @@ const PostDetail = () => {
    getUserPostsDetail(userId)
   },[userId])
   const getUserPostsDetail = async (userId) => {
-   let res = await axios.get(`http://localhost:8080/user/post/detail/${userId}`)
+   let res = await axios.get(`https://rest-api-server-1-iwtx.onrender.com/user/post/detail/${userId}`)
    let posts = await res.data.posts
    setUserPosts(posts.post)
    setUserPostsDetail(posts)

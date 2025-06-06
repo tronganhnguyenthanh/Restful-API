@@ -29,7 +29,7 @@ const User = () => {
    toast.error("Please enter your email", {position:"top-center"})
    return
   }else{
-    let res = await axios.post("http://localhost:8080/user/add", {firstName:data.firstName, lastName:data.lastName,email:data.email})
+    let res = await axios.post("https://rest-api-server-1-iwtx.onrender.com/user/add", {firstName:data.firstName, lastName:data.lastName,email:data.email})
     toast.success(res.data.message, {position:"top-center"})
     setTimeout(function(){
      navigate("/user/posts/add")

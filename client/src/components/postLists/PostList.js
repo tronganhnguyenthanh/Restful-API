@@ -10,7 +10,7 @@ const PostList = () => {
    getPostLists()
   },[])
   const getPostLists = async () => {
-    let res = await axios.get("http://localhost:8080/post/lists")
+    let res = await axios.get("https://rest-api-server-1-iwtx.onrender.com/post/lists")
     let posts = res.data.postList
     let uniquePosts = []
     let seenIds = new Set()
@@ -28,7 +28,7 @@ const PostList = () => {
   const deletePost = async (postId) => {
     let isConfirmed = window.confirm("Are you sure to delete this post?")
     if(isConfirmed === true){
-     let res = await axios.delete(`http://localhost:8080/post/${postId}`)
+     let res = await axios.delete(`https://rest-api-server-1-iwtx.onrender.com/post/${postId}`)
      toast.success(res.data.message, {position:"top-center"})
      window.location.reload(false)
     }
