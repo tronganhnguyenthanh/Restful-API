@@ -4,8 +4,10 @@ import {useState} from "react"
 import {Container, Row, Col, Form, Button} from "react-bootstrap"
 import {Link, useNavigate} from "react-router-dom"
 import {toast, ToastContainer} from "react-toastify"
+import Loading from "../../loading/Loading"
 const UserPost = () => {
   const [authors, setAuthors] = useState([])
+  const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [selected, setSelected] = useState("")
@@ -16,6 +18,7 @@ const UserPost = () => {
   const getAuthors = async () => {
    let res = await axios.get("https://rest-api-server-1-iwtx.onrender.com/user/lists")
    setAuthors(res.data.users)
+   setLoading(!loading)
   }
   const handleAddPost = async () => {
     if(title === ""){
@@ -71,19 +74,28 @@ const UserPost = () => {
           <Col lg="12">
             <div className="mb-4">
              <Form.Label>Author</Form.Label>
-              {authors.length > 0 && authors.map((author, index) => {
-                return(
-                 <Form.Check
-                   key={index}
-                   className="form-custom-control w-100"
-                   type="radio"
-                   value={author.userId}
-                   label={author.firstName + " " + author.lastName + " " + `(${author.email})`}
-                   name="name"
-                   onChange={(e) => setSelected(e.target.value)}
-                 />
-                )
-               })
+              {
+               loading ? 
+                <div>
+                  <Loading/>
+                </div>
+                : 
+                <>
+                 {authors.length && authors.map((author, index) => {
+                   return(
+                    <Form.Check 
+                      key={index} 
+                      className="form-custom-control w-100" 
+                      type="radio" 
+                      value={author.userId} 
+                      label={author.firstName + " " + author.lastName + " " + `(${author.email})`} 
+                      name="name" 
+                      onChange={(e) => setSelected(e.target.value)}
+                    />
+                   )
+                 })
+                 }
+                </>
               }
             </div>
           </Col>

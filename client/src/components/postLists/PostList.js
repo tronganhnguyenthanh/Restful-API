@@ -2,43 +2,46 @@ import axios from "axios"
 import {useState, useEffect} from "react"
 import {Button, Table} from "react-bootstrap"
 import {Link, useNavigate} from "react-router-dom"
-import {toast, ToastContainer } from "react-toastify"
+import {toast, ToastContainer} from "react-toastify"
+import Loading from "../../loading/Loading"
 const PostList = () => {
   const [postLists, setPostLists] = useState([])
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   useEffect(() => {
    getPostLists()
   },[])
   const getPostLists = async () => {
-    let res = await axios.get("https://rest-api-server-1-iwtx.onrender.com/post/lists")
-    let posts = res.data.postList
-    let uniquePosts = []
-    let seenIds = new Set()
-    for(let post of posts){
-     if (!seenIds.has(post.authorId)){
-      seenIds.add(post.authorId)
-      uniquePosts.push(post)
-      setPostLists(uniquePosts)
-     }
+   let res = await axios.get("https://rest-api-server-1-iwtx.onrender.com/post/lists")
+   let posts = res.data.postList
+   let uniquePosts = []
+   let seenIds = new Set()
+   for(let post of posts) {
+    if(!seenIds.has(post.authorId)) {
+     seenIds.add(post.authorId)
+     uniquePosts.push(post)
+     setPostLists(uniquePosts)
     }
+   }
+   setLoading(!loading)
   }
   const viewPostDetail = (authorId) => {
-    navigate(`/user/post/detail/${authorId}`)
+   navigate(`/user/post/detail/${authorId}`)
   }
   const deletePost = async (postId) => {
     let isConfirmed = window.confirm("Are you sure to delete this post?")
     if(isConfirmed === true){
      let res = await axios.delete(`https://rest-api-server-1-iwtx.onrender.com/post/${postId}`)
-     toast.success(res.data.message, {position:"top-center"})
+     toast.success(res.data.message, { position: "top-center" })
      window.location.reload(false)
     }
   }
   const handleFilter = (e) => {
-    if(e.target.value === ""){
+    if(e.target.value === "") {
      getPostLists()
     }else{
-      let filterPost = postLists.filter((i) => i.title.includes(e.target.value))
-      setPostLists(filterPost)
+     let filterPost = postLists.filter((i) => i.title.includes(e.target.value))
+     setPostLists(filterPost)
     }
   }
   return (
@@ -57,9 +60,9 @@ const PostList = () => {
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
             </svg>
           </span>
-          <input 
-            type="text" 
-            className="form-control pl-4" 
+          <input
+            type="text"
+            className="form-control pl-4"
             placeholder="Please enter your keyword"
             onChange={handleFilter}
           />
@@ -75,20 +78,32 @@ const PostList = () => {
           </tr>
         </thead>
         <tbody>
-          {postLists.length > 0 && postLists.map((i, index) => {
-            return (
-              <tr key={index}>
-                <td className="text-center text-primary align-middle">{index + 1}</td>
-                <td className="text-center text-info text-nowrap align-middle">{i.title}</td>
-                <td className="text-secondary text-nowrap align-middle text-truncate">{i.content}</td>
-                <td className="text-center text-nowrap align-middle">
-                  <Button variant="primary" onClick={() => viewPostDetail(i.authorId)}>View posts</Button>
-                  <Button variant="danger" className="m-2" onClick={() => deletePost(i.postId)}>Delete post</Button>
-                </td>
-              </tr>
-            )
-          })
-          }
+          <>
+            {
+              loading
+                ?
+                <div className="d-flex justify-content-center">
+                  <Loading/>
+                </div>
+                :
+                <>
+                  {postLists.length > 0 && postLists.map((i, index) => {
+                    return (
+                      <tr key={index}>
+                        <td className="text-center text-primary align-middle">{index + 1}</td>
+                        <td className="text-center text-info text-nowrap align-middle">{i.title}</td>
+                        <td className="text-secondary text-nowrap align-middle text-truncate">{i.content}</td>
+                        <td className="text-center text-nowrap align-middle">
+                          <Button variant="primary" onClick={() => viewPostDetail(i.authorId)}>View posts</Button>
+                          <Button variant="danger" className="m-2" onClick={() => deletePost(i.postId)}>Delete post</Button>
+                        </td>
+                      </tr>
+                    )
+                  })
+                  }
+                </>
+            }
+          </>
         </tbody>
       </Table>
     </div>
