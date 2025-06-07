@@ -36,8 +36,10 @@ const PostDetail = () => {
             <Loading/> 
             :
             <>
-             ({userPostsDetail.lastName} 
-             {userPostsDetail.firstName})
+             (
+              {userPostsDetail.lastName} 
+              {" " + userPostsDetail.firstName}
+             )
             </>
            }
           </>
